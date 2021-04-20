@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Создать новую заметку{% endblock %}
+{% block content %}
+  {% csrf_token %}
+  <h2>Создать новую заметку</h2>
+  {{ form.media }}
+  {{ form.content }}
+  <div><button onclick="createNote()">Создать</button> <span id="servResponse"></span></div>
+  <script>
+    function createNote() {
+      const userInput = document.getElementsByClassName("cke_wysiwyg_frame")[0].contentWindow.document.body;
+      const servResponse = document.getElementById("servResponse");
+      if (userInput.textContent !== "") {
+        fetch("{% url 'api:note-list' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value,
+          },
+          body: JSON.stringify({
+            content: userInput.innerHTML
+          })
+        }).then(response => {
+          if(response.ok) {
+            return response.json().then(json => {
+              const root_url = window.location.protocol + "//" + window.location.host;
+              const note_url = root_url + "/notes/" + json.id;
+              servResponse.textContent = `Заметка создана, ссылка: ${note_url}/`;
+              userInput.innerHTML = "";
+            });
+          }
+          return Promise.reject(response.statusText);
+        });
+      }
+    }
+  </script>
+{% endblock %}

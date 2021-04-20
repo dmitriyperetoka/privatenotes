@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Страница не найдена{% endblock %}
+{% block content %}
+  <h2>Страница {{ request.path }} не найдена</h2>
+  <p><a href="{% url 'index' %}">Вернуться на главную страницу</a></p>
+{% endblock %}
