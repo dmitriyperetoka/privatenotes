@@ -1,25 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Заметка{% endblock %}
 {% block content %}
-  {% csrf_token %}
   <h2>Текст заметки:</h2>
   <div>{{ object.content|safe }}</div>
-  <script>
-    function deleteNote(uuid) {
-      console.log(uuid);
-      fetch(`/api/v1/notes/${uuid}/`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value,
-        },
-      }).then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
-    }
-    window.onLoad = deleteNote("{{ object.id }}")
-  </script>
 {% endblock %}
