@@ -134,3 +134,4 @@ dmypy.json
 # Miscellaneous
 static/
 media/
+*.s3db
