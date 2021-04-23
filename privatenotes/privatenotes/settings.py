@@ -104,4 +104,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-XML_RPC_SERVER_PATH = 'http://localhost:8001/'
+XML_RPC_SERVER_URL = 'http://localhost:8001/'

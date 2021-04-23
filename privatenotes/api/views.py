@@ -9,6 +9,6 @@ from privatenotes import settings
 class NoteViewSet(viewsets.ViewSet):
     @staticmethod
     def create(request):
-        with xmlrpc.client.ServerProxy(settings.XML_RPC_SERVER_PATH) as proxy:
+        with xmlrpc.client.ServerProxy(settings.XML_RPC_SERVER_URL) as proxy:
             id_ = proxy.create_note(request.data['content'])
             return JsonResponse({'id': id_})
