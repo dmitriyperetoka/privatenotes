@@ -1,16 +1,14 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import mixins, viewsets
+import xmlrpc.client
 
-from .serializers import NoteSerializer
-from notes.models import Note
+from django.http import JsonResponse
+from rest_framework import viewsets
+
+from privatenotes import settings
 
 
-class NoteViewSet(
-        mixins.CreateModelMixin,
-        mixins.DestroyModelMixin,
-        viewsets.GenericViewSet
-):
-    serializer_class = NoteSerializer
-
-    def get_object(self):
-        return get_object_or_404(Note, id=self.kwargs.get('pk'))
+class NoteViewSet(viewsets.ViewSet):
+    @staticmethod
+    def create(request):
+        with xmlrpc.client.ServerProxy(settings.XML_RPC_SERVER_PATH) as proxy:
+            id_ = proxy.create_note(request.data['content'])
+            return JsonResponse({'id': id_})

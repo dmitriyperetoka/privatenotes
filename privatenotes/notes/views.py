@@ -1,9 +1,10 @@
-import requests
-from django.shortcuts import reverse
-from django.views.generic import FormView, DetailView
+import xmlrpc.client
+
+from django.http import Http404
+from django.views.generic import FormView, TemplateView
 
 from .forms import NoteForm
-from .models import Note
+from privatenotes import settings
 
 
 class NoteCreateView(FormView):
@@ -11,13 +12,14 @@ class NoteCreateView(FormView):
     form_class = NoteForm
 
 
-class NoteDetailView(DetailView):
-    model = Note
+class NoteDetailView(TemplateView):
+    template_name = 'notes/note_detail.html'
 
-    def render_to_response(self, context, **response_kwargs):
-        protocol = self.request.META['wsgi.url_scheme']
-        host = self.request.get_host()
-        path = reverse('api:note-detail', kwargs={'pk': self.object.id})
-        url = f'{protocol}://{host}{path}'
-        requests.delete(url)
-        return super().render_to_response(context, **response_kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        with xmlrpc.client.ServerProxy(settings.XML_RPC_SERVER_PATH) as proxy:
+            content = proxy.read_and_delete_note(self.kwargs['pk'])
+            if not content:
+                raise Http404
+            context['content'] = content
+        return context

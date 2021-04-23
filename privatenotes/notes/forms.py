@@ -1,9 +1,9 @@
+from ckeditor import widgets
 from django import forms
 
-from .models import Note
 
+class NoteForm(forms.Form):
+    content = forms.CharField(widget=widgets.CKEditorWidget())
 
-class NoteForm(forms.ModelForm):
     class Meta:
         fields = ['content']
-        model = Note
