@@ -7,6 +7,7 @@ from privatenotes import settings
 
 
 class NoteViewSet(viewsets.ViewSet):
+    """Create a single note."""
     @staticmethod
     def create(request):
         with xmlrpc.client.ServerProxy(settings.XML_RPC_SERVER_URL) as proxy:
